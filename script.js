@@ -1,12 +1,17 @@
 // ==========================================
 // P-BARBER SHOP
-// Sistema inicial de reservas
+// Sistema de reservas
 // ==========================================
 
 const formulario = document.getElementById("formularioCita");
 const mensaje = document.getElementById("mensaje");
 const fecha = document.getElementById("fecha");
 
+// ==========================================
+// URL DE LA API EN RENDER
+// ==========================================
+
+const API_URL = "https://p-barber-shop.onrender.com";
 
 // ==========================================
 // NO PERMITIR FECHAS ANTERIORES A HOY
@@ -29,17 +34,15 @@ const fechaActual =
 
 fecha.min = fechaActual;
 
-
 // ==========================================
 // CONFIRMAR CITA
 // ==========================================
 
 formulario.addEventListener(
     "submit",
-    function (evento) {
+    async function (evento) {
 
         evento.preventDefault();
-
 
         // Obtener información
         const nombre =
@@ -57,48 +60,90 @@ formulario.addEventListener(
         const hora =
             document.getElementById("hora").value;
 
+        // Mostrar mensaje mientras se guarda
+        mensaje.innerHTML = `
+            ⏳ Guardando tu cita...
+        `;
 
-        // Convertir fecha
-        const fechaBonita =
-            new Date(
-                fechaSeleccionada + "T00:00:00"
-            ).toLocaleDateString(
-                "es-CO",
+        try {
+
+            // Enviar la cita a la API
+            const respuesta = await fetch(
+                `${API_URL}/citas`,
                 {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        nombre: nombre,
+                        telefono: telefono,
+                        servicio: servicio,
+                        fecha: fechaSeleccionada,
+                        hora: hora
+                    })
                 }
             );
 
+            const datos = await respuesta.json();
 
-        // Mostrar confirmación
-        mensaje.innerHTML = `
-            ✅ ¡Cita registrada correctamente!
-            <br><br>
+            // Comprobar si hubo error
+            if (!respuesta.ok) {
+                throw new Error(
+                    datos.detail || "No se pudo registrar la cita"
+                );
+            }
 
-            👤 ${nombre}
-            <br>
+            // Convertir fecha
+            const fechaBonita =
+                new Date(
+                    fechaSeleccionada + "T00:00:00"
+                ).toLocaleDateString(
+                    "es-CO",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric"
+                    }
+                );
 
-            ✂️ ${servicio}
-            <br>
+            // Mostrar confirmación
+            mensaje.innerHTML = `
+                ✅ ¡Cita registrada correctamente!
+                <br><br>
 
-            📅 ${fechaBonita}
-            <br>
+                👤 ${nombre}
+                <br>
 
-            🕐 ${hora}
-            <br>
+                ✂️ ${servicio}
+                <br>
 
-            📱 ${telefono}
-        `;
+                📅 ${fechaBonita}
+                <br>
 
+                🕐 ${hora}
+                <br>
 
-        // Limpiar formulario
-        formulario.reset();
+                📱 ${telefono}
+            `;
 
+            // Limpiar formulario
+            formulario.reset();
 
-        // Mantener la fecha mínima
-        fecha.min = fechaActual;
+            // Mantener la fecha mínima
+            fecha.min = fechaActual;
 
+        } catch (error) {
+
+            console.error(error);
+
+            mensaje.innerHTML = `
+                ❌ No se pudo registrar la cita.
+                <br><br>
+                Inténtalo nuevamente.
+            `;
+        }
     }
 );
