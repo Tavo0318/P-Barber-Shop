@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Panel de administración - P-Barber Shop</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .contenedor {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .login,
+        .panel {
+            background: #1c1c1c;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+        }
+
+        .login {
+            max-width: 450px;
+            margin: 80px auto;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #292929;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-top: 18px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .btn-principal {
+            width: 100%;
+            background: #d4af37;
+            color: #111;
+        }
+
+        .btn-principal:hover {
+            background: #f0c94b;
+        }
+
+        .barra {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: end;
+            margin-bottom: 25px;
+        }
+
+        .filtro {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .filtro label {
+            margin-top: 0;
+        }
+
+        .btn-secundario {
+            background: #333;
+            color: white;
+        }
+
+        .btn-salir {
+            background: #8b1e1e;
+            color: white;
+        }
+
+        .cita {
+            background: #292929;
+            border-left: 4px solid #d4af37;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .cita h3 {
+            margin-bottom: 10px;
+        }
+
+        .cita p {
+            margin-bottom: 7px;
+        }
+
+        .btn-cancelar {
+            background: #b3261e;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .mensaje {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .error {
+            background: #5c1f1f;
+            color: #ffbaba;
+        }
+
+        .exito {
+            background: #1d5130;
+            color: #b9ffd0;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .vacio {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+        }
+
+        @media (max-width: 600px) {
+            .contenedor {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .login,
+            .panel {
+                padding: 20px;
+            }
+
+            .barra {
+                display: block;
+            }
+
+            .barra button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <!-- LOGIN -->
+    <section id="login" class="login">
+
+        <h1>💈 P-Barber Shop</h1>
+
+        <p>Panel de administración</p>
+
+        <label for="usuario">Usuario</label>
+        <input
+            type="text"
+            id="usuario"
+            placeholder="Ingresa tu usuario"
+        >
+
+        <label for="contrasena">Contraseña</label>
+        <input
+            type="password"
+            id="contrasena"
+            placeholder="Ingresa tu contraseña"
+        >
+
+        <button
+            class="btn-principal"
+            onclick="iniciarSesion()"
+        >
+            Iniciar sesión
+        </button>
+
+        <div id="mensajeLogin" class="mensaje"></div>
+
+    </section>
+
+
+    <!-- PANEL -->
+    <section id="panel" class="panel oculto">
+
+        <h1>💈 Panel de administración</h1>
+
+        <p>Gestiona las citas de P-Barber Shop</p>
+
+
+        <div class="barra">
+
+            <div class="filtro">
+
+                <label for="fecha">Filtrar por fecha</label>
+
+                <input
+                    type="date"
+                    id="fecha"
+                >
+
+            </div>
+
+            <button
+                class="btn-secundario"
+                onclick="cargarCitas()"
+            >
+                Buscar
+            </button>
+
+            <button
+                class="btn-secundario"
+                onclick="mostrarTodas()"
+            >
+                Todas
+            </button>
+
+            <button
+                class="btn-salir"
+                onclick="cerrarSesion()"
+            >
+                Cerrar sesión
+            </button>
+
+        </div>
+
+
+        <div id="mensajePanel" class="mensaje"></div>
+
+        <div id="listaCitas"></div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    // ==========================================
+    // URL DE LA API PUBLICADA EN RENDER
+    // ==========================================
+
+    const API_URL = "https://p-barber-shop.onrender.com";
+
+
+    // ==========================================
+    // MOSTRAR MENSAJES
+    // ==========================================
+
+    function mostrarMensaje(elemento, mensaje, tipo) {
+
+        elemento.textContent = mensaje;
+
+        elemento.className = "mensaje " + tipo;
+
+        elemento.style.display = "block";
+
+    }
+
+
+    // ==========================================
+    // INICIAR SESIÓN
+    // ==========================================
+
+    async function iniciarSesion() {
+
+        const usuario =
+            document.getElementById("usuario").value.trim();
+
+        const contrasena =
+            document.getElementById("contrasena").value;
+
+
+        const mensaje =
+            document.getElementById("mensajeLogin");
+
+
+        if (!usuario || !contrasena) {
+
+            mostrarMensaje(
+                mensaje,
+                "Completa todos los campos.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const respuesta = await fetch(
+                API_URL + "/admin/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        usuario: usuario,
+                        contraseña: contrasena
+                    })
+                }
+            );
+
+
+            const datos = await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    datos.detail ||
+                    "Usuario o contraseña incorrectos."
+                );
+
+            }
+
+
+            localStorage.setItem(
+                "adminToken",
+                datos.token
+            );
+
+
+            document.getElementById("login")
+                .classList.add("oculto");
+
+
+            document.getElementById("panel")
+                .classList.remove("oculto");
+
+
+            cargarCitas();
+
+
+        } catch (error) {
+
+            mostrarMensaje(
+                mensaje,
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // CARGAR CITAS
+    // ==========================================
+
+    async function cargarCitas() {
+
+        const token =
+            localStorage.getItem("adminToken");
+
+
+        if (!token) {
+
+            cerrarSesion();
+
+            return;
+        }
+
+
+        const fecha =
+            document.getElementById("fecha").value;
+
+
+        let url =
+            API_URL + "/admin/citas";
+
+
+        if (fecha) {
+
+            url += "?fecha=" +
+                encodeURIComponent(fecha);
+
+        }
+
+
+        const lista =
+            document.getElementById("listaCitas");
+
+
+        const mensaje =
+            document.getElementById("mensajePanel");
+
+
+        lista.innerHTML =
+            "<p>Cargando citas...</p>";
+
+
+        try {
+
+            const respuesta = await fetch(
+                url,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+            const datos =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                if (respuesta.status === 401) {
+
+                    cerrarSesion();
+
+                    return;
+                }
+
+
+                throw new Error(
+                    datos.detail ||
+                    "No se pudieron cargar las citas."
+                );
+
+            }
+
+
+            mostrarCitas(datos.citas);
+
+
+        } catch (error) {
+
+            lista.innerHTML = "";
+
+            mostrarMensaje(
+                mensaje,
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR TODAS LAS CITAS
+    // ==========================================
+
+    function mostrarTodas() {
+
+        document.getElementById("fecha").value = "";
+
+        cargarCitas();
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR CITAS
+    // ==========================================
+
+    function mostrarCitas(citas) {
+
+        const lista =
+            document.getElementById("listaCitas");
+
+
+        if (!citas || citas.length === 0) {
+
+            lista.innerHTML = `
+                <div class="vacio">
+                    No hay citas registradas.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        lista.innerHTML = "";
+
+
+        citas.forEach(function(cita) {
+
+            const elemento =
+                document.createElement("div");
+
+
+            elemento.className = "cita";
+
+
+            elemento.innerHTML = `
+
+                <h3>💈 ${escapeHtml(cita.nombre)}</h3>
+
+                <p>
+                    <strong>📞 Teléfono:</strong>
+                    ${escapeHtml(cita.telefono)}
+                </p>
+
+                <p>
+                    <strong>✂️ Servicio:</strong>
+                    ${escapeHtml(cita.servicio)}
+                </p>
+
+                <p>
+                    <strong>📅 Fecha:</strong>
+                    ${escapeHtml(cita.fecha)}
+                </p>
+
+                <p>
+                    <strong>🕐 Hora:</strong>
+                    ${escapeHtml(cita.hora)}
+                </p>
+
+                <button
+                    class="btn-cancelar"
+                    onclick="eliminarCita(${cita.id})"
+                >
+                    Cancelar cita
+                </button>
+
+            `;
+
+
+            lista.appendChild(elemento);
+
+        });
+
+    }
+
+
+    // ==========================================
+    // CANCELAR CITA
+    // ==========================================
+
+    async function eliminarCita(id) {
+
+        const confirmar =
+            confirm(
+                "¿Seguro que quieres cancelar esta cita?"
+            );
+
+
+        if (!confirmar) {
+
+            return;
+        }
+
+
+        const token =
+            localStorage.getItem("adminToken");
+
+
+        try {
+
+            const respuesta = await fetch(
+                API_URL + "/admin/citas/" + id,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+            const datos =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    datos.detail ||
+                    "No se pudo cancelar la cita."
+                );
+
+            }
+
+
+            alert(
+                "Cita cancelada correctamente."
+            );
+
+
+            cargarCitas();
+
+
+        } catch (error) {
+
+            alert(error.message);
+
+        }
+
+    }
+
+
+    // ==========================================
+    // CERRAR SESIÓN
+    // ==========================================
+
+    function cerrarSesion() {
+
+        localStorage.removeItem(
+            "adminToken"
+        );
+
+
+        document.getElementById("panel")
+            .classList.add("oculto");
+
+
+        document.getElementById("login")
+            .classList.remove("oculto");
+
+
+        document.getElementById("usuario")
+            .value = "";
+
+
+        document.getElementById("contrasena")
+            .value = "";
+
+
+        document.getElementById("listaCitas")
+            .innerHTML = "";
+
+    }
+
+
+    // ==========================================
+    // SEGURIDAD BÁSICA PARA MOSTRAR TEXTO
+    // ==========================================
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent =
+            text ?? "";
+
+        return div.innerHTML;
+
+    }
+
+
+    // ==========================================
+    // COMPROBAR SI YA HAY SESIÓN
+    // ==========================================
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            const token =
+                localStorage.getItem("adminToken");
+
+
+            if (token) {
+
+                document.getElementById("login")
+                    .classList.add("oculto");
+
+
+                document.getElementById("panel")
+                    .classList.remove("oculto");
+
+
+                cargarCitas();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
