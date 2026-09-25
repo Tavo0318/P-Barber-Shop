@@ -1,0 +1,422 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b0b0b;
+    color: white;
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 7%;
+
+    background: rgba(0, 0, 0, 0.94);
+
+    border-bottom: 1px solid #292929;
+
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: #d4a72c;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #d4a72c;
+}
+
+
+/* =========================
+   INICIO
+========================= */
+
+.hero {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+
+    padding: 120px 8% 80px;
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.78),
+            rgba(0, 0, 0, 0.9)
+        ),
+        radial-gradient(
+            circle at right,
+            #493713,
+            #111 45%,
+            #050505 80%
+        );
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.subtitulo {
+    color: #d4a72c;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(55px, 8vw, 100px);
+    line-height: 0.95;
+    margin-bottom: 30px;
+}
+
+.hero h1 span {
+    color: #d4a72c;
+}
+
+.descripcion {
+    max-width: 570px;
+    color: #c7c7c7;
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 35px;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.boton {
+    display: inline-block;
+
+    background: #d4a72c;
+    color: #111;
+
+    padding: 15px 28px;
+
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    border: none;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.boton:hover {
+    background: #f0c84b;
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   SECCIONES
+========================= */
+
+.servicios,
+.agendar {
+    padding: 100px 8%;
+}
+
+.servicios {
+    background: #111;
+}
+
+.agendar {
+    background: #0b0b0b;
+}
+
+.titulo-seccion {
+    text-align: center;
+    margin-bottom: 55px;
+}
+
+.titulo-seccion p {
+    color: #d4a72c;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+}
+
+.titulo-seccion h2 {
+    font-size: 42px;
+}
+
+
+/* =========================
+   SERVICIOS
+========================= */
+
+.servicios-container {
+    max-width: 1100px;
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.servicio {
+    padding: 35px 28px;
+
+    background: #191919;
+
+    border: 1px solid #292929;
+
+    border-radius: 12px;
+
+    text-align: center;
+
+    transition: 0.3s;
+}
+
+.servicio:hover {
+    transform: translateY(-8px);
+
+    border-color: #d4a72c;
+}
+
+.servicio.destacado {
+    border-color: #d4a72c;
+}
+
+.icono {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.servicio h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.servicio p {
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 22px;
+}
+
+.servicio strong {
+    color: #d4a72c;
+    font-size: 21px;
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+
+.formulario-container {
+    max-width: 700px;
+    margin: auto;
+
+    padding: 40px;
+
+    background: #151515;
+
+    border: 1px solid #292929;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+#formularioCita {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ddd;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+
+    padding: 14px 15px;
+
+    background: #0c0c0c;
+
+    color: white;
+
+    border: 1px solid #333;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: #d4a72c;
+}
+
+.fila {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+}
+
+.confirmar {
+    width: 100%;
+    margin-top: 10px;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   MENSAJE
+========================= */
+
+.mensaje {
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #d4a72c;
+
+    font-weight: bold;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   PIE DE PAGINA
+========================= */
+
+footer {
+    padding: 35px 8%;
+
+    background: #050505;
+
+    border-top: 1px solid #292929;
+
+    text-align: center;
+}
+
+footer .logo {
+    margin-bottom: 12px;
+}
+
+footer p {
+    color: #777;
+    font-size: 13px;
+}
+
+
+/* =========================
+   CELULARES
+========================= */
+
+@media (max-width: 800px) {
+
+    .header {
+        padding: 0 5%;
+    }
+
+    nav {
+        display: none;
+    }
+
+    .hero {
+        padding: 120px 7% 70px;
+    }
+
+    .hero h1 {
+        font-size: 58px;
+    }
+
+    .descripcion {
+        font-size: 16px;
+    }
+
+    .servicios,
+    .agendar {
+        padding: 80px 6%;
+    }
+
+    .servicios-container {
+        grid-template-columns: 1fr;
+    }
+
+    .fila {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-container {
+        padding: 25px;
+    }
+
+    .titulo-seccion h2 {
+        font-size: 34px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+}
